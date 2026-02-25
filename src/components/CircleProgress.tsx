@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { ReactNode } from 'react';
 
 interface CircleProgressProps {
   value: number;
@@ -8,7 +9,7 @@ interface CircleProgressProps {
   color: string;
   label: string;
   unit?: string;
-  icon?: string;
+  icon?: ReactNode;
   onClick?: () => void;
 }
 
@@ -53,7 +54,7 @@ const CircleProgress = ({ value, max, size, strokeWidth, color, label, unit = ''
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          {icon && <span className="text-lg">{icon}</span>}
+          {icon && <span className="flex items-center justify-center" style={{ width: size > 120 ? 28 : 18, height: size > 120 ? 28 : 18 }}>{icon}</span>}
           <span className={`font-bold ${size > 120 ? 'text-2xl' : 'text-sm'}`}>
             {Math.round(value)}
           </span>

@@ -61,7 +61,7 @@ const History = () => {
           onClick={() => navigate('/premium')}
           className="w-full mb-4 p-3 bg-accent rounded-xl text-center"
         >
-          <p className="text-sm font-bold text-foreground">⭐ Quer ver mais? Seja Premium!</p>
+          <p className="text-sm font-bold text-foreground">⭐ Seja Premium!</p>
           <p className="text-xs text-muted-foreground">Histórico completo de 30 dias</p>
         </button>
       )}
@@ -87,14 +87,17 @@ const History = () => {
                     {dayCalories} / {profile?.dailyCalorieGoal} kcal
                   </span>
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {entries.map(entry => (
                     <div
                       key={entry.id}
-                      className="flex items-center justify-between p-3 bg-card rounded-xl shadow-card"
+                      className="flex items-center justify-between p-3 bg-card rounded-xl shadow-card border border-border"
                     >
-                      <p className="text-sm font-semibold text-foreground capitalize">{entry.name}</p>
-                      <p className="text-sm text-muted-foreground font-bold">{entry.nutrients.calories} kcal</p>
+                      <div>
+                        <p className="text-sm font-bold text-foreground capitalize">{entry.name}</p>
+                        <p className="text-xs text-muted-foreground">{entry.quantity}</p>
+                      </div>
+                      <p className="text-sm font-bold text-foreground">{entry.nutrients.calories} kcal</p>
                     </div>
                   ))}
                 </div>

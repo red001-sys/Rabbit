@@ -1,14 +1,14 @@
 import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Settings, Plus, Clock } from 'lucide-react';
+import { Settings, Plus, Clock, Camera, PenLine } from 'lucide-react';
 import CircleProgress from '@/components/CircleProgress';
-import RabbitMascot from '@/components/RabbitMascot';
 import FoodEntryDialog from '@/components/FoodEntryDialog';
 import FoodDetailSheet from '@/components/FoodDetailSheet';
 import SettingsDialog from '@/components/SettingsDialog';
 import AdDialog from '@/components/AdDialog';
 import InfoBalloon from '@/components/InfoBalloon';
-import { getProfile, getTodayTotals } from '@/lib/storage';
+import { SteakIcon, OilDropIcon, SugarCubesIcon } from '@/components/MacroIcons';
+import { getProfile, getTodayTotals, getTodayEntries } from '@/lib/storage';
 import { calculateDailyMacroGoals } from '@/lib/calories';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,35 +23,28 @@ const Dashboard = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [showAd, setShowAd] = useState(false);
   const [balloon, setBalloon] = useState<string | null>(null);
+  const [entryMode, setEntryMode] = useState<'text' | 'photo'>('text');
 
   const totals = getTodayTotals();
   const goals = calculateDailyMacroGoals(profile.dailyCalorieGoal);
+  const todayEntries = getTodayEntries();
 
   const balloonData: Record<string, { title: string; description: string; color: string }> = {
     protein: {
-      title: '🥩 Proteína',
-      description: 'Essencial para construção muscular e recuperação. Presente em carnes, ovos, leguminosas e laticínios.',
+      title: 'Proteína',
+      description: 'Construção muscular e recuperação.',
       color: 'hsl(var(--protein))',
     },
-    carbs: {
-      title: '🍞 Carboidratos',
-      description: 'Principal fonte de energia do corpo. Encontrado em arroz, pão, massas, frutas e tubérculos.',
-      color: 'hsl(var(--carbs))',
+    fat: {
+      title: 'Gordura',
+      description: 'Energia e absorção de vitaminas.',
+      color: 'hsl(var(--fat))',
     },
     sugar: {
-      title: '🧊 Açúcar',
-      description: 'Tipo de carboidrato simples. Consumo excessivo está ligado a problemas de saúde. Modere doces e bebidas açucaradas.',
+      title: 'Açúcar',
+      description: 'Modere o consumo de açúcares simples.',
       color: 'hsl(var(--sugar))',
     },
-  };
-
-  const getMascotMessage = () => {
-    const pct = totals.calories / profile.dailyCalorieGoal;
-    if (pct === 0) return 'Bora registrar o primeiro alimento! 🥕';
-    if (pct < 0.5) return 'Bom começo! Continue assim! 💪';
-    if (pct < 0.9) return 'Quase na meta! 🎯';
-    if (pct <= 1) return 'Meta atingida! Parabéns! 🎉';
-    return 'Ops, passou da meta! Cuidado! 😅';
   };
 
   return (
@@ -78,11 +71,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Mascot */}
-      <div className="flex justify-center mt-2 mb-4">
-        <RabbitMascot message={getMascotMessage()} size={70} />
-      </div>
-
       {/* Main calorie circle */}
       <div className="flex justify-center mt-4">
         <CircleProgress
@@ -105,20 +93,20 @@ const Dashboard = () => {
           strokeWidth={6}
           color="hsl(var(--protein))"
           label="Proteína"
-          icon="🥩"
+          icon={<SteakIcon size={18} className="text-protein" />}
           unit="g"
           onClick={() => setBalloon('protein')}
         />
         <CircleProgress
-          value={totals.carbs}
-          max={goals.carbs}
+          value={totals.fat}
+          max={goals.fat}
           size={80}
           strokeWidth={6}
-          color="hsl(var(--carbs))"
-          label="Carbos"
-          icon="🍞"
+          color="hsl(var(--fat))"
+          label="Gordura"
+          icon={<OilDropIcon size={18} className="text-fat" />}
           unit="g"
-          onClick={() => setBalloon('carbs')}
+          onClick={() => setBalloon('fat')}
         />
         <CircleProgress
           value={totals.sugar}
@@ -127,24 +115,67 @@ const Dashboard = () => {
           strokeWidth={6}
           color="hsl(var(--sugar))"
           label="Açúcar"
-          icon="🧊"
+          icon={<SugarCubesIcon size={18} className="text-sugar" />}
           unit="g"
           onClick={() => setBalloon('sugar')}
         />
       </div>
 
-      {/* Meta info */}
-      <div className="text-center mt-6">
-        <p className="text-sm text-muted-foreground">
-          Meta diária: <span className="font-bold text-foreground">{profile.dailyCalorieGoal} kcal</span>
-        </p>
+      {/* Add food buttons */}
+      <div className="flex justify-center gap-3 mt-8 px-5">
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          onClick={() => { setEntryMode('text'); setShowFoodEntry(true); }}
+          className="flex-1 flex items-center justify-center gap-2 h-12 rounded-xl bg-primary text-primary-foreground font-bold text-sm shadow-soft"
+        >
+          <PenLine className="w-4 h-4" />
+          Adicionar por texto
+        </motion.button>
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          onClick={() => { setEntryMode('photo'); setShowFoodEntry(true); }}
+          className="flex-1 flex items-center justify-center gap-2 h-12 rounded-xl bg-accent text-accent-foreground font-bold text-sm shadow-card"
+        >
+          <Camera className="w-4 h-4" />
+          Adicionar por foto
+        </motion.button>
       </div>
 
-      {/* FAB - Add food */}
+      {/* Today's food list */}
+      <div className="px-5 mt-6">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-bold text-foreground">Hoje</h2>
+          <button onClick={() => navigate('/history')} className="flex items-center gap-1 text-xs text-muted-foreground font-semibold">
+            <Clock className="w-3.5 h-3.5" /> Histórico
+          </button>
+        </div>
+        {todayEntries.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center py-6">Nenhum alimento registrado.</p>
+        ) : (
+          <div className="space-y-2">
+            {todayEntries.map(entry => (
+              <motion.div
+                key={entry.id}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center justify-between p-3 bg-card rounded-xl shadow-card border border-border"
+              >
+                <div>
+                  <p className="text-sm font-bold text-foreground capitalize">{entry.name}</p>
+                  <p className="text-xs text-muted-foreground">{entry.quantity}</p>
+                </div>
+                <p className="text-sm font-bold text-foreground">{entry.nutrients.calories} kcal</p>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* FAB - Add food (bottom left) */}
       <motion.button
         whileTap={{ scale: 0.9 }}
-        onClick={() => setShowFoodEntry(true)}
-        className="fixed bottom-20 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full gradient-primary shadow-soft flex items-center justify-center z-30"
+        onClick={() => { setEntryMode('text'); setShowFoodEntry(true); }}
+        className="fixed bottom-6 left-5 w-14 h-14 rounded-full gradient-primary shadow-soft flex items-center justify-center z-30"
       >
         <Plus className="w-7 h-7 text-primary-foreground" />
       </motion.button>
