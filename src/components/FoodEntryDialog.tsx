@@ -37,7 +37,7 @@ const FoodEntryDialog = ({ open, onClose, onAdded, dailyGoal, onShowAd }: FoodEn
 
     const nutrients = lookupFood(parsed.name, parsed.grams);
     if (!nutrients) {
-      setError(`Não encontrei "${parsed.name}" na base. Tente outro alimento.`);
+      setError('Alimento não encontrado.');
       setShowSuggestions(true);
       return;
     }

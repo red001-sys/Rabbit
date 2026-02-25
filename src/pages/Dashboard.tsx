@@ -51,7 +51,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Hero Header */}
-      <div className="hero-header rounded-b-[2rem] px-5 pt-8 pb-10 relative overflow-hidden">
+      <div className="hero-header rounded-b-[2.5rem] px-5 pt-8 pb-10 relative overflow-hidden">
         {/* Decorative circles */}
         <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/10" />
         <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-white/10" />
@@ -100,12 +100,12 @@ const Dashboard = () => {
 
       {/* Macro circles */}
       <div className="flex justify-center gap-6 -mt-1 px-5">
-        <div className="bg-card rounded-3xl shadow-elevated p-4 flex gap-6">
+        <div className="bg-card rounded-[1.5rem] shadow-elevated p-5 flex gap-8 border border-border">
           <CircleProgress
             value={totals.protein}
             max={goals.protein}
             size={85}
-            strokeWidth={8}
+            strokeWidth={9}
             color="hsl(var(--protein))"
             label="Proteína"
             icon={<SteakIcon size={18} className="text-protein" />}
@@ -116,7 +116,7 @@ const Dashboard = () => {
             value={totals.fat}
             max={goals.fat}
             size={85}
-            strokeWidth={8}
+            strokeWidth={9}
             color="hsl(var(--fat))"
             label="Gordura"
             icon={<OilDropIcon size={18} className="text-fat" />}
@@ -127,7 +127,7 @@ const Dashboard = () => {
             value={totals.sugar}
             max={goals.sugar}
             size={85}
-            strokeWidth={8}
+            strokeWidth={9}
             color="hsl(var(--sugar))"
             label="Açúcar"
             icon={<SugarCubesIcon size={18} className="text-sugar" />}
@@ -166,7 +166,7 @@ const Dashboard = () => {
           </button>
         </div>
         {todayEntries.length === 0 ? (
-          <div className="bg-card rounded-2xl shadow-elevated p-8 text-center">
+          <div className="bg-card rounded-[1.25rem] shadow-elevated border border-border p-8 text-center">
             <p className="text-3xl mb-2">🥗</p>
             <p className="text-sm text-muted-foreground font-semibold">Nenhum alimento registrado.</p>
           </div>
@@ -178,7 +178,7 @@ const Dashboard = () => {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="flex items-center gap-3 p-4 bg-card rounded-2xl shadow-elevated border border-border"
+                className="flex items-center gap-3 p-4 bg-card rounded-[1.25rem] shadow-elevated border border-border"
               >
                 <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center flex-shrink-0">
                   <span className="text-lg">🍽️</span>
