@@ -7,13 +7,15 @@ interface CircleProgressProps {
   size: number;
   strokeWidth: number;
   color: string;
+  trackColor?: string;
   label: string;
   unit?: string;
   icon?: ReactNode;
   onClick?: () => void;
+  heroMode?: boolean;
 }
 
-const CircleProgress = ({ value, max, size, strokeWidth, color, label, unit = '', icon, onClick }: CircleProgressProps) => {
+const CircleProgress = ({ value, max, size, strokeWidth, color, trackColor, label, unit = '', icon, onClick, heroMode }: CircleProgressProps) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const progress = Math.min(value / max, 1);
@@ -36,7 +38,7 @@ const CircleProgress = ({ value, max, size, strokeWidth, color, label, unit = ''
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="hsl(var(--muted))"
+            stroke={trackColor || "hsl(var(--muted))"}
             strokeWidth={strokeWidth}
           />
           <motion.circle
@@ -54,14 +56,14 @@ const CircleProgress = ({ value, max, size, strokeWidth, color, label, unit = ''
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          {icon && <span className="flex items-center justify-center" style={{ width: size > 120 ? 28 : 18, height: size > 120 ? 28 : 18 }}>{icon}</span>}
-          <span className={`font-bold ${size > 120 ? 'text-2xl' : 'text-sm'}`}>
+          {icon && <span className="flex items-center justify-center mb-0.5" style={{ width: size > 120 ? 28 : 18, height: size > 120 ? 28 : 18 }}>{icon}</span>}
+          <span className={`font-extrabold ${heroMode ? 'text-4xl text-white' : size > 120 ? 'text-2xl' : 'text-sm'}`}>
             {Math.round(value)}
           </span>
-          {unit && <span className="text-xs text-muted-foreground">{unit}</span>}
+          {unit && <span className={`text-xs font-semibold ${heroMode ? 'text-white/70' : 'text-muted-foreground'}`}>{unit}</span>}
         </div>
       </div>
-      <span className="text-xs font-semibold text-muted-foreground">{label}</span>
+      {label && <span className="text-xs font-bold text-muted-foreground">{label}</span>}
     </motion.div>
   );
 };

@@ -47,6 +47,7 @@
     --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(140 30% 97%));
     --shadow-soft: 0 4px 20px -4px hsl(142 52% 45% / 0.15);
     --shadow-card: 0 2px 12px -2px hsl(150 30% 10% / 0.08);
+    --shadow-elevated: 0 8px 30px -6px hsl(150 30% 10% / 0.12);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -91,6 +92,7 @@
     --gradient-card: linear-gradient(145deg, hsl(150 15% 12%), hsl(150 15% 15%));
     --shadow-soft: 0 4px 20px -4px hsl(0 0% 0% / 0.3);
     --shadow-card: 0 2px 12px -2px hsl(0 0% 0% / 0.3);
+    --shadow-elevated: 0 8px 30px -6px hsl(0 0% 0% / 0.4);
   }
 }
 
@@ -120,6 +122,14 @@
 
   .shadow-card {
     box-shadow: var(--shadow-card);
+  }
+
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .hero-header {
+    background: linear-gradient(135deg, hsl(142 52% 42%), hsl(155 60% 35%), hsl(165 55% 38%));
   }
 
   .circle-progress {
