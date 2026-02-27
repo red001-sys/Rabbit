@@ -13,9 +13,12 @@ interface CircleProgressProps {
   icon?: ReactNode;
   onClick?: () => void;
   heroMode?: boolean;
+  displayText?: string;
+  macroLabel?: string;
+  macroGoal?: string;
 }
 
-const CircleProgress = ({ value, max, size, strokeWidth, color, trackColor, label, unit = '', icon, onClick, heroMode }: CircleProgressProps) => {
+const CircleProgress = ({ value, max, size, strokeWidth, color, trackColor, label, unit = '', icon, onClick, heroMode, displayText, macroLabel, macroGoal }: CircleProgressProps) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const progress = Math.min(value / max, 1);
@@ -56,14 +59,30 @@ const CircleProgress = ({ value, max, size, strokeWidth, color, trackColor, labe
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          {icon && <span className="flex items-center justify-center mb-0.5" style={{ width: size > 120 ? 28 : 18, height: size > 120 ? 28 : 18 }}>{icon}</span>}
-          <span className={`font-extrabold ${heroMode ? 'text-4xl text-white' : size > 120 ? 'text-2xl' : 'text-sm'}`}>
-            {Math.round(value)}
-          </span>
-          {unit && <span className={`text-xs font-semibold ${heroMode ? 'text-white/70' : 'text-muted-foreground'}`}>{unit}</span>}
+          {icon && <span className="flex items-center justify-center" style={{ width: size > 120 ? 28 : 22, height: size > 120 ? 28 : 22 }}>{icon}</span>}
+          {displayText ? (
+            <>
+              <span className="text-3xl font-extrabold text-foreground">{displayText}</span>
+              {unit && <span className="text-xs font-semibold text-muted-foreground">{unit}</span>}
+            </>
+          ) : !icon && (
+            <>
+              <span className={`font-extrabold ${heroMode ? 'text-4xl text-white' : size > 120 ? 'text-2xl' : 'text-sm'}`}>
+                {Math.round(value)}
+              </span>
+              {unit && <span className={`text-xs font-semibold ${heroMode ? 'text-white/70' : 'text-muted-foreground'}`}>{unit}</span>}
+            </>
+          )}
         </div>
       </div>
-      {label && <span className="text-xs font-bold text-muted-foreground">{label}</span>}
+      {macroLabel ? (
+        <div className="flex flex-col items-center">
+          <span className="text-sm font-extrabold text-foreground">{macroLabel}</span>
+          <span className="text-xs text-muted-foreground">{macroGoal}</span>
+        </div>
+      ) : (
+        label && <span className="text-xs font-bold text-muted-foreground">{label}</span>
+      )}
     </motion.div>
   );
 };

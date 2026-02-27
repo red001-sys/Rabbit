@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Settings, Camera, PenLine } from 'lucide-react';
+import { Settings, Camera, Sparkles } from 'lucide-react';
 import CircleProgress from '@/components/CircleProgress';
 import FoodEntryDialog from '@/components/FoodEntryDialog';
 import FoodDetailSheet from '@/components/FoodDetailSheet';
@@ -30,6 +30,7 @@ const Dashboard = () => {
   const goals = calculateDailyMacroGoals(profile.dailyCalorieGoal);
   const todayEntries = getTodayEntries();
   const remaining = profile.dailyCalorieGoal - totals.calories;
+  const percentage = Math.min(Math.round((totals.calories / profile.dailyCalorieGoal) * 100), 100);
 
   const balloonData: Record<string, { title: string; description: string; color: string }> = {
     protein: { title: 'Proteína', description: 'Construção muscular e recuperação.', color: 'hsl(var(--protein))' },
@@ -38,118 +39,142 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-8">
-      {/* Hero Header */}
-      <div className="hero-header rounded-b-[2.5rem] px-5 pt-10 pb-28 relative overflow-hidden">
+    <div className="min-h-screen bg-background pb-24">
+      {/* Green Header - tall, with calorie info */}
+      <div className="hero-header px-5 pt-10 pb-36 relative overflow-hidden">
+        {/* Decorative circles */}
         <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/10" />
         <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-white/10" />
-        <div className="absolute top-12 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full bg-white/5" />
 
         <div className="relative z-10">
-          <div className="flex items-center justify-between mb-2">
+          {/* Top bar */}
+          <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
-              <img src={rabbitLogo} alt="Logo" className="w-9 h-9 rounded-xl" />
+              <img src={rabbitLogo} alt="Logo" className="w-10 h-10 rounded-xl" />
               <div>
-                <p className="text-xs text-white/60 font-semibold">Olá,</p>
-                <h1 className="text-lg font-extrabold text-white">{profile.name} 👋</h1>
+                <p className="text-xs text-white/70 font-semibold">Olá,</p>
+                <h1 className="text-lg font-extrabold text-white">{profile.name}</h1>
               </div>
             </div>
             <button
               onClick={() => setShowSettings(true)}
-              className="p-2.5 rounded-2xl bg-white/15 hover:bg-white/25 transition-colors backdrop-blur-sm"
+              className="p-2.5 rounded-2xl bg-white/15 hover:bg-white/25 transition-colors"
             >
               <Settings className="w-5 h-5 text-white" />
             </button>
           </div>
+
+          {/* Calorie info centered in green */}
+          <div className="text-center">
+            <p className="text-sm text-white/70 font-semibold">Calorias de hoje</p>
+            <p className="text-5xl font-extrabold text-white mt-1">{totals.calories}</p>
+            <p className="text-sm text-white/70 font-semibold mt-1">de {profile.dailyCalorieGoal} kcal</p>
+          </div>
         </div>
       </div>
 
-      {/* Main calorie card - overlapping hero */}
-      <div className="px-5 -mt-24 relative z-10">
+      {/* Overlapping progress card */}
+      <div className="px-5 -mt-20 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-card rounded-[1.75rem] shadow-elevated border border-border p-6"
+          className="bg-card rounded-[1.75rem] shadow-elevated border border-border p-8"
         >
           <div className="flex justify-center">
             <CircleProgress
-              value={totals.calories}
-              max={profile.dailyCalorieGoal}
+              value={percentage}
+              max={100}
               size={180}
-              strokeWidth={16}
+              strokeWidth={14}
               color="hsl(var(--primary))"
               trackColor="hsl(var(--muted))"
               label=""
-              unit="kcal"
+              unit="da meta"
+              displayText={`${percentage}%`}
             />
           </div>
-          <p className="text-center text-muted-foreground text-sm font-bold mt-2">
-            {remaining > 0 ? `Restam ${remaining} kcal` : '🎉 Meta atingida!'}
+          <p className="text-center text-muted-foreground text-sm font-bold mt-3">
+            {remaining <= 0 ? 'Meta atingida! 🎉' : `Restam ${remaining} kcal`}
           </p>
         </motion.div>
       </div>
 
-      {/* Macro circles */}
-      <div className="px-5 mt-4">
+      {/* Macronutrientes card */}
+      <div className="px-5 mt-5">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-card rounded-[1.75rem] shadow-elevated border border-border p-5 flex justify-around"
+          className="bg-card rounded-[1.75rem] shadow-elevated border border-border p-5"
         >
-          <CircleProgress
-            value={totals.protein}
-            max={goals.protein}
-            size={80}
-            strokeWidth={8}
-            color="hsl(var(--protein))"
-            label="Proteína"
-            icon={<SteakIcon size={16} className="text-protein" />}
-            unit="g"
-            onClick={() => setBalloon('protein')}
-          />
-          <CircleProgress
-            value={totals.fat}
-            max={goals.fat}
-            size={80}
-            strokeWidth={8}
-            color="hsl(var(--fat))"
-            label="Gordura"
-            icon={<OilDropIcon size={16} className="text-fat" />}
-            unit="g"
-            onClick={() => setBalloon('fat')}
-          />
-          <CircleProgress
-            value={totals.sugar}
-            max={goals.sugar}
-            size={80}
-            strokeWidth={8}
-            color="hsl(var(--sugar))"
-            label="Açúcar"
-            icon={<SugarCubesIcon size={16} className="text-sugar" />}
-            unit="g"
-            onClick={() => setBalloon('sugar')}
-          />
+          <h2 className="text-base font-bold text-muted-foreground mb-4">Macronutrientes</h2>
+          <div className="flex justify-around">
+            <CircleProgress
+              value={totals.protein}
+              max={goals.protein}
+              size={90}
+              strokeWidth={8}
+              color="hsl(var(--protein))"
+              label=""
+              icon={<SteakIcon size={22} className="text-protein" />}
+              unit=""
+              onClick={() => setBalloon('protein')}
+              macroLabel={`${Math.round(totals.protein)}g`}
+              macroGoal={`de ${goals.protein}g`}
+            />
+            <CircleProgress
+              value={totals.fat}
+              max={goals.fat}
+              size={90}
+              strokeWidth={8}
+              color="hsl(var(--sugar))"
+              label=""
+              icon={<OilDropIcon size={22} className="text-sugar" />}
+              unit=""
+              onClick={() => setBalloon('fat')}
+              macroLabel={`${Math.round(totals.fat)}g`}
+              macroGoal={`de ${goals.fat}g`}
+            />
+            <CircleProgress
+              value={totals.sugar}
+              max={goals.sugar}
+              size={90}
+              strokeWidth={8}
+              color="hsl(var(--fat))"
+              label=""
+              icon={<SugarCubesIcon size={22} className="text-fat" />}
+              unit=""
+              onClick={() => setBalloon('sugar')}
+              macroLabel={`${Math.round(totals.sugar)}g`}
+              macroGoal={`de ${goals.sugar}g`}
+            />
+          </div>
         </motion.div>
       </div>
 
-      {/* Add food buttons */}
-      <div className="px-5 mt-4 space-y-3">
+      {/* Side-by-side action buttons */}
+      <div className="px-5 mt-5 flex gap-3">
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={() => { setEntryMode('text'); setShowFoodEntry(true); }}
-          className="w-full flex items-center justify-center gap-2.5 h-14 rounded-2xl gradient-primary text-white font-bold text-sm shadow-elevated"
+          className="flex-1 flex flex-col items-start gap-1 p-4 rounded-[1.5rem] bg-card shadow-elevated border border-border"
         >
-          <PenLine className="w-5 h-5" />
-          Adicionar por texto
+          <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center mb-1">
+            <Sparkles className="w-5 h-5 text-white" />
+          </div>
+          <p className="text-sm font-extrabold text-foreground">IA por texto</p>
+          <p className="text-xs text-muted-foreground">Descreva o alimento</p>
         </motion.button>
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={() => { setEntryMode('photo'); setShowFoodEntry(true); }}
-          className="w-full flex items-center justify-center gap-2.5 h-14 rounded-2xl bg-card text-foreground font-bold text-sm shadow-elevated border border-border"
+          className="flex-1 flex flex-col items-start gap-1 p-4 rounded-[1.5rem] bg-card shadow-elevated border border-border"
         >
-          <Camera className="w-5 h-5" />
-          Adicionar por foto
+          <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center mb-1">
+            <Camera className="w-5 h-5 text-white" />
+          </div>
+          <p className="text-sm font-extrabold text-foreground">IA por foto</p>
+          <p className="text-xs text-muted-foreground">Tire uma foto</p>
         </motion.button>
       </div>
 
@@ -189,15 +214,6 @@ const Dashboard = () => {
           </div>
         )}
       </div>
-
-      {/* Detail FAB */}
-      <motion.button
-        whileTap={{ scale: 0.9 }}
-        onClick={() => setShowDetail(true)}
-        className="fixed bottom-6 right-5 w-14 h-14 rounded-2xl bg-card shadow-elevated border border-border flex items-center justify-center z-30"
-      >
-        <span className="text-lg">📊</span>
-      </motion.button>
 
       {/* Info balloons */}
       {balloon && balloonData[balloon] && (
