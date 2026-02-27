@@ -7,6 +7,13 @@ import { parseFoodInput, lookupFood, getAvailableFoods } from '@/lib/calories';
 import { saveEntry, getTodayTotals, incrementAdCount, getAdCount, isPremium } from '@/lib/storage';
 import { FoodEntry, NutrientInfo } from '@/types';
 
+const PORTION_TYPES = [
+  { label: 'g', factor: 1 },
+  { label: 'unidade', factor: 100 },
+  { label: 'colher', factor: 15 },
+  { label: 'fatia', factor: 30 },
+];
+
 interface FoodEntryDialogProps {
   open: boolean;
   onClose: () => void;
@@ -17,6 +24,8 @@ interface FoodEntryDialogProps {
 
 const FoodEntryDialog = ({ open, onClose, onAdded, dailyGoal, onShowAd }: FoodEntryDialogProps) => {
   const [input, setInput] = useState('');
+  const [portion, setPortion] = useState('g');
+  const [portionQty, setPortionQty] = useState('100');
   const [result, setResult] = useState<{ name: string; grams: number; nutrients: NutrientInfo } | null>(null);
   const [error, setError] = useState('');
   const [warning, setWarning] = useState('');
@@ -29,39 +38,45 @@ const FoodEntryDialog = ({ open, onClose, onAdded, dailyGoal, onShowAd }: FoodEn
     setWarning('');
     setResult(null);
 
-    const parsed = parseFoodInput(input);
-    if (!parsed) {
-      setError('Não entendi. Tente algo como "100g de arroz".');
+    const qty = parseInt(portionQty) || 100;
+    const portionData = PORTION_TYPES.find(p => p.label === portion);
+    const grams = portion === 'g' ? qty : qty * (portionData?.factor || 100);
+
+    // Try direct name first
+    const name = input.trim().toLowerCase();
+    if (!name) {
+      setError('Digite o nome do alimento.');
       return;
     }
 
-    const nutrients = lookupFood(parsed.name, parsed.grams);
+    const nutrients = lookupFood(name, grams);
     if (!nutrients) {
       setError('Alimento não encontrado.');
       setShowSuggestions(true);
       return;
     }
 
-    // Check if adding this would exceed daily goal
     const todayTotals = getTodayTotals();
     const newTotal = todayTotals.calories + nutrients.calories;
     if (newTotal > dailyGoal) {
-      setWarning(`Atenção: esse alimento vai ultrapassar sua meta diária (${Math.round(newTotal)} / ${dailyGoal} kcal).`);
+      setWarning(`Atenção: vai ultrapassar sua meta (${Math.round(newTotal)} / ${dailyGoal} kcal).`);
     } else if (newTotal > dailyGoal * 0.9) {
-      setWarning(`Você está chegando perto da sua meta diária (${Math.round(newTotal)} / ${dailyGoal} kcal).`);
+      setWarning(`Perto da meta (${Math.round(newTotal)} / ${dailyGoal} kcal).`);
     }
 
-    setResult({ name: parsed.name, grams: parsed.grams, nutrients });
+    setResult({ name, grams, nutrients });
     setShowSuggestions(false);
   };
 
   const handleAdd = () => {
     if (!result) return;
 
+    const portionLabel = portion === 'g' ? `${result.grams}g` : `${portionQty} ${portion}(s)`;
+
     const entry: FoodEntry = {
       id: Date.now().toString(),
-      name: `${result.grams}g de ${result.name}`,
-      quantity: `${result.grams}g`,
+      name: result.name,
+      quantity: portionLabel,
       nutrients: result.nutrients,
       timestamp: Date.now(),
       date: new Date().toISOString().split('T')[0],
@@ -69,7 +84,6 @@ const FoodEntryDialog = ({ open, onClose, onAdded, dailyGoal, onShowAd }: FoodEn
 
     saveEntry(entry);
     
-    // Check ad counter
     if (!isPremium()) {
       const count = incrementAdCount();
       if (count % 3 === 0) {
@@ -115,18 +129,43 @@ const FoodEntryDialog = ({ open, onClose, onAdded, dailyGoal, onShowAd }: FoodEn
             </button>
           </div>
 
-          <div className="flex gap-2">
+          <div className="space-y-3">
             <Input
               value={input}
               onChange={e => { setInput(e.target.value); setError(''); }}
-              placeholder='Ex: "100g de arroz"'
-              className="flex-1 h-11"
+              placeholder='Ex: "arroz", "frango", "banana"'
+              className="h-11"
               onKeyDown={e => e.key === 'Enter' && handleSearch()}
               maxLength={100}
             />
-            <Button onClick={handleSearch} className="h-11 gradient-primary text-primary-foreground">
-              <Search className="w-4 h-4" />
-            </Button>
+            <div className="flex gap-2">
+              <Input
+                type="number"
+                value={portionQty}
+                onChange={e => setPortionQty(e.target.value)}
+                className="h-11 w-20"
+                min={1}
+                max={5000}
+              />
+              <div className="flex gap-1.5 flex-1 overflow-x-auto">
+                {PORTION_TYPES.map(p => (
+                  <button
+                    key={p.label}
+                    onClick={() => setPortion(p.label)}
+                    className={`px-3 py-2 rounded-xl text-xs font-bold transition-colors whitespace-nowrap ${
+                      portion === p.label
+                        ? 'gradient-primary text-white'
+                        : 'bg-accent text-accent-foreground'
+                    }`}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+              <Button onClick={handleSearch} className="h-11 gradient-primary text-primary-foreground">
+                <Search className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
 
           {error && (

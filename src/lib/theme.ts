@@ -1,7 +1,7 @@
 const THEME_KEY = 'calorie_app_theme';
 
 export function getTheme(): 'light' | 'dark' {
-  return (localStorage.getItem(THEME_KEY) as 'light' | 'dark') || 'light';
+  return (localStorage.getItem(THEME_KEY) as 'light' | 'dark') || 'dark';
 }
 
 export function setTheme(theme: 'light' | 'dark') {
@@ -11,5 +11,9 @@ export function setTheme(theme: 'light' | 'dark') {
 
 export function applyTheme(theme?: 'light' | 'dark') {
   const t = theme || getTheme();
-  document.documentElement.classList.toggle('dark', t === 'dark');
+  if (t === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
 }
