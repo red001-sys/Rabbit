@@ -127,9 +127,9 @@ const Dashboard = () => {
               max={goals.fat}
               size={90}
               strokeWidth={8}
-              color="hsl(var(--sugar))"
+              color="hsl(var(--fat))"
               label=""
-              icon={<OilDropIcon size={22} className="text-sugar" />}
+              icon={<OilDropIcon size={22} className="text-fat" />}
               unit=""
               onClick={() => setBalloon('fat')}
               macroLabel={`${Math.round(totals.fat)}g`}
@@ -140,9 +140,9 @@ const Dashboard = () => {
               max={goals.sugar}
               size={90}
               strokeWidth={8}
-              color="hsl(var(--fat))"
+              color="hsl(var(--sugar))"
               label=""
-              icon={<SugarCubesIcon size={22} className="text-fat" />}
+              icon={<SugarCubesIcon size={22} className="text-sugar" />}
               unit=""
               onClick={() => setBalloon('sugar')}
               macroLabel={`${Math.round(totals.sugar)}g`}
@@ -162,7 +162,7 @@ const Dashboard = () => {
           <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center mb-1">
             <Sparkles className="w-5 h-5 text-white" />
           </div>
-          <p className="text-sm font-extrabold text-foreground">IA por texto</p>
+          <p className="text-sm font-extrabold text-foreground">Adicionar por texto</p>
           <p className="text-xs text-muted-foreground">Descreva o alimento</p>
         </motion.button>
         <motion.button
@@ -173,7 +173,7 @@ const Dashboard = () => {
           <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center mb-1">
             <Camera className="w-5 h-5 text-white" />
           </div>
-          <p className="text-sm font-extrabold text-foreground">IA por foto</p>
+          <p className="text-sm font-extrabold text-foreground">Adicionar por foto</p>
           <p className="text-xs text-muted-foreground">Tire uma foto</p>
         </motion.button>
       </div>
