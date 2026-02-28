@@ -109,7 +109,7 @@ const FoodEntryDialog = ({ open, onClose, onAdded, dailyGoal, onShowAd }: FoodEn
 
     if (!isPremium()) {
       const count = incrementAdCount();
-      if (count % 3 === 0) {
+      if (count % 6 === 0) {
         onShowAd();
       }
     }

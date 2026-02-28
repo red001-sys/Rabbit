@@ -1,12 +1,15 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft, Check, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { setPremium } from '@/lib/storage';
 import RabbitMascot from '@/components/RabbitMascot';
 
 const Premium = () => {
   const navigate = useNavigate();
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'annual'>('annual');
 
   const handleActivate = () => {
     setPremium(true);
@@ -18,6 +21,23 @@ const Premium = () => {
     'Histórico completo de 30 dias',
     'Detalhes nutricionais avançados',
   ];
+
+  const plans = {
+    monthly: {
+      label: 'Mensal',
+      price: 'R$ 19,90',
+      period: '/mês',
+      totalYear: 'R$ 238,80/ano',
+    },
+    annual: {
+      label: 'Anual',
+      price: 'R$ 2,49',
+      period: '/mês',
+      subtitle: '12x de R$ 2,49 ou R$ 29,90 à vista',
+      totalYear: 'R$ 29,90/ano',
+      savings: 'Economia de R$ 208,90 por ano',
+    },
+  };
 
   return (
     <div className="min-h-screen bg-background px-5 pt-6 pb-8 flex flex-col">
@@ -36,11 +56,11 @@ const Premium = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mt-8 w-full max-w-sm"
         >
-          <div className="bg-card rounded-2xl p-6 shadow-card border border-primary/20">
+          {/* Features */}
+          <div className="bg-card rounded-2xl p-6 shadow-card border border-primary/20 mb-4">
             <h2 className="text-2xl font-black text-foreground mb-1">Premium</h2>
-            <p className="text-muted-foreground text-sm mb-6">Aproveite ao máximo seu controle de calorias</p>
-
-            <div className="space-y-3 mb-6 text-left">
+            <p className="text-muted-foreground text-sm mb-5">Aproveite ao máximo seu controle de calorias</p>
+            <div className="space-y-3 text-left">
               {features.map(f => (
                 <div key={f} className="flex items-center gap-3">
                   <div className="w-6 h-6 rounded-full gradient-primary flex items-center justify-center flex-shrink-0">
@@ -50,15 +70,73 @@ const Premium = () => {
                 </div>
               ))}
             </div>
-
-            <Button
-              onClick={handleActivate}
-              className="w-full h-12 gradient-primary text-primary-foreground font-bold text-base"
-            >
-              Ativar Premium (Demo)
-            </Button>
-            <p className="text-xs text-muted-foreground mt-2">Versão demonstrativa gratuita</p>
           </div>
+
+          {/* Plan selector */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            {/* Monthly */}
+            <button
+              onClick={() => setSelectedPlan('monthly')}
+              className={`relative p-4 rounded-2xl border-2 text-left transition-all ${
+                selectedPlan === 'monthly'
+                  ? 'border-primary bg-primary/5'
+                  : 'border-border bg-card'
+              }`}
+            >
+              <p className="text-xs font-bold text-muted-foreground mb-1">{plans.monthly.label}</p>
+              <p className="text-xl font-black text-foreground">{plans.monthly.price}</p>
+              <p className="text-xs text-muted-foreground">{plans.monthly.period}</p>
+            </button>
+
+            {/* Annual */}
+            <button
+              onClick={() => setSelectedPlan('annual')}
+              className={`relative p-4 rounded-2xl border-2 text-left transition-all ${
+                selectedPlan === 'annual'
+                  ? 'border-primary bg-primary/5'
+                  : 'border-border bg-card'
+              }`}
+            >
+              <Badge className="absolute -top-2.5 right-2 bg-destructive text-destructive-foreground text-[10px] font-black px-2 py-0.5">
+                90% OFF
+              </Badge>
+              <p className="text-xs font-bold text-muted-foreground mb-1">{plans.annual.label}</p>
+              <p className="text-xl font-black text-foreground">{plans.annual.price}</p>
+              <p className="text-xs text-muted-foreground">{plans.annual.period}</p>
+            </button>
+          </div>
+
+          {/* Plan details */}
+          <motion.div
+            key={selectedPlan}
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-card rounded-2xl p-4 shadow-card border border-border mb-4"
+          >
+            {selectedPlan === 'annual' ? (
+              <div className="space-y-1.5 text-center">
+                <p className="text-sm font-bold text-foreground">{plans.annual.subtitle}</p>
+                <p className="text-xs text-muted-foreground line-through">Mensal: {plans.monthly.totalYear}</p>
+                <p className="text-xs font-bold text-primary flex items-center justify-center gap-1">
+                  <Zap className="w-3.5 h-3.5" />
+                  {plans.annual.savings}
+                </p>
+              </div>
+            ) : (
+              <div className="text-center">
+                <p className="text-sm font-bold text-foreground">{plans.monthly.price} cobrado mensalmente</p>
+                <p className="text-xs text-muted-foreground mt-1">Total: {plans.monthly.totalYear}</p>
+              </div>
+            )}
+          </motion.div>
+
+          <Button
+            onClick={handleActivate}
+            className="w-full h-12 gradient-primary text-primary-foreground font-bold text-base"
+          >
+            Ativar Premium (Demo)
+          </Button>
+          <p className="text-xs text-muted-foreground mt-2">Versão demonstrativa gratuita</p>
         </motion.div>
       </div>
     </div>
