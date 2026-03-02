@@ -12,6 +12,7 @@ import { getProfile, getTodayTotals, getTodayEntries } from '@/lib/storage';
 import { calculateDailyMacroGoals } from '@/lib/calories';
 import { useNavigate } from 'react-router-dom';
 import { MASCOT_LOGO } from '@/lib/mascot';
+import AdBanner from '@/components/AdBanner';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -97,6 +98,11 @@ const Dashboard = () => {
             {remaining <= 0 ? 'Meta atingida! 🎉' : `Restam ${remaining} kcal`}
           </p>
         </motion.div>
+      </div>
+
+      {/* Ad banner - only for free users */}
+      <div className="px-5 mt-4">
+        <AdBanner format="horizontal" className="rounded-2xl overflow-hidden" />
       </div>
 
       {/* Macronutrientes card */}
