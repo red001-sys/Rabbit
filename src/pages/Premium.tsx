@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Check, Zap, Loader2 } from 'lucide-react';
+import { ArrowLeft, Check, Zap, Loader2, Crown, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { setPremium } from '@/lib/storage';
-import RabbitMascot from '@/components/RabbitMascot';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -71,7 +69,14 @@ const Premium = () => {
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center text-center">
-        <RabbitMascot message="Desbloqueie tudo! 🌟" size={90} />
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 12 }}
+          className="w-20 h-20 rounded-full gradient-primary flex items-center justify-center shadow-lg"
+        >
+          <Crown className="w-10 h-10 text-primary-foreground" />
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
