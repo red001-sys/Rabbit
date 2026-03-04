@@ -15,10 +15,12 @@ const Premium = () => {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'annual'>('annual');
   const [loading, setLoading] = useState(false);
 
-  const handleActivate = async () => {
+  const comprarPlano = async (plan: 'mensal' | 'anual') => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('create-checkout');
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { plan },
+      });
       if (error) throw error;
       if (data?.url) {
         window.location.href = data.url;
@@ -151,7 +153,7 @@ const Premium = () => {
           </motion.div>
 
           <Button
-            onClick={handleActivate}
+            onClick={() => comprarPlano(selectedPlan === 'annual' ? 'anual' : 'mensal')}
             disabled={loading}
             className="w-full h-12 gradient-primary text-primary-foreground font-bold text-base"
           >

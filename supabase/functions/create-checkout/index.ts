@@ -18,16 +18,21 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
+    const { plan } = await req.json().catch(() => ({ plan: "mensal" }));
+
+    const plans: Record<string, { price: string; mode: "payment" | "subscription" }> = {
+      mensal: { price: "price_1T7MwuRjaZ0FbxXhG6NbSa6r", mode: "payment" },
+      anual: { price: "price_1T7NgZRjaZ0FbxXhuuej6tpT", mode: "subscription" },
+    };
+
+    const selected = plans[plan];
+    if (!selected) throw new Error(`Plano inválido: ${plan}`);
+
     const origin = req.headers.get("origin") || "https://nutri-buddy-coach-10.lovable.app";
 
     const session = await stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price: "price_1T7MwuRjaZ0FbxXhG6NbSa6r",
-          quantity: 1,
-        },
-      ],
-      mode: "payment",
+      line_items: [{ price: selected.price, quantity: 1 }],
+      mode: selected.mode,
       success_url: `${origin}/payment-success`,
       cancel_url: `${origin}/premium`,
     });
