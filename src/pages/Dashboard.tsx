@@ -28,6 +28,13 @@ const Dashboard = () => {
   const [balloon, setBalloon] = useState<string | null>(null);
   const [entryMode, setEntryMode] = useState<'text' | 'photo'>('text');
 
+  useEffect(() => { initAdMob(); }, []);
+
+  const handleShowAd = useCallback(async () => {
+    const shown = await showInterstitialAd();
+    if (!shown) setShowAd(true); // fallback to web AdDialog
+  }, []);
+
   const totals = getTodayTotals();
   const goals = calculateDailyMacroGoals(profile.dailyCalorieGoal);
   const todayEntries = getTodayEntries();
