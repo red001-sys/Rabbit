@@ -254,7 +254,7 @@ const Dashboard = () => {
       )}
 
       {/* Dialogs */}
-      <FoodEntryDialog open={showFoodEntry} onClose={() => setShowFoodEntry(false)} onAdded={refresh} dailyGoal={profile.dailyCalorieGoal} onShowAd={() => setShowAd(true)} />
+      <FoodEntryDialog open={showFoodEntry} onClose={() => setShowFoodEntry(false)} onAdded={refresh} dailyGoal={profile.dailyCalorieGoal} onShowAd={handleShowAd} />
       <FoodDetailSheet open={showDetail} onClose={() => setShowDetail(false)} dailyGoal={profile.dailyCalorieGoal} onUpdate={refresh} />
       <SettingsDialog open={showSettings} onClose={() => setShowSettings(false)} onUpdate={refresh} />
       <AdDialog open={showAd} onClose={() => setShowAd(false)} onPremium={() => { setShowAd(false); navigate('/premium'); }} />
