@@ -56,6 +56,7 @@ const FoodEntryDialog = ({ open, onClose, onAdded, dailyGoal, onShowAd }: FoodEn
           text: text || undefined,
           imageBase64: photo || undefined,
           mode: photo ? 'photo' : 'text',
+          language: language,
         },
       });
 
