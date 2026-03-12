@@ -1,47 +1,71 @@
-name: Build Android APK
+name: Build Android App
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Baixar código
+      # 1️⃣ Baixar código
+      - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Instalar Node
+      # 2️⃣ Instalar NodeJS >= 22
+      - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: "22"
 
+      # 3️⃣ Instalar dependências
       - name: Instalar dependências
         run: npm install
 
-      - name: Build do projeto
+      # 4️⃣ Build do projeto web (Vite)
+      - name: Build do Vite
         run: npm run build
 
-      - name: Sincronizar Capacitor
+      # 5️⃣ Sincronizar Capacitor
+      - name: Sincronizar Capacitor Android
         run: npx cap sync android
 
-      - name: Instalar Java
+      # 6️⃣ Instalar Java (Temurin 21)
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
 
-      - name: Gerar APK
+      # 7️⃣ Build APK Debug
+      - name: Build APK Debug
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Salvar APK
+      # 8️⃣ Build APK Release
+      - name: Build APK Release
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease
+
+      # 9️⃣ Build AAB Release
+      - name: Build AAB Release
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew bundleRelease
+
+      # 🔟 Salvar artefatos para download
+      - name: Salvar APK e AAB
         uses: actions/upload-artifact@v4
         with:
-          name: nutri-app-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: nutri-app-builds
+          path: |
+            android/app/build/outputs/apk/debug/app-debug.apk
+            android/app/build/outputs/apk/release/app-release.apk
+            android/app/build/outputs/bundle/release/app-release.aab
