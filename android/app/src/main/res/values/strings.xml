@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">NutriBuddy</string>
+    <string name="title_activity_main">NutriBuddy</string>
+    <string name="package_name">app.lovable.aa1646eb938b483d941bdc95db20b728</string>
+    <string name="custom_url_scheme">app.lovable.aa1646eb938b483d941bdc95db20b728</string>
+</resources>
