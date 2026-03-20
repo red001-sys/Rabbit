@@ -1,7 +1,6 @@
 workflows:
-  android-build:
+  build-apk:
     name: Rabbit
-    max_build_duration: 60
 
     environment:
       node: 22
