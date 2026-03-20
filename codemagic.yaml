@@ -1,25 +1,21 @@
 workflows:
   build-apk:
-    name: Rabbit
+    name: Rabbit APK Build
 
-environment:
-  node: 22
-  java: 17
-
- scripts:
-      - name: Force Java 17
-        script: |
-      export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
-      java -version
+    environment:
+      node: 22
+      java: 17
 
     scripts:
+      - name: Force Java 17
+        script: |
+          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+          export PATH=$JAVA_HOME/bin:$PATH
+          java -version
+
       - name: Install dependencies
         script: |
           npm install --legacy-peer-deps
-          
-      - name: install capacitor
-        script: |
-         npm install @capacitor/android@5 @capacitor/core@5 @capacitor/cli@5
 
       - name: Build web app
         script: |
@@ -32,6 +28,7 @@ environment:
       - name: Build APK
         script: |
           cd android
+          ./gradlew clean
           ./gradlew assembleDebug
 
     artifacts:
