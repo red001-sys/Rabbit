@@ -7,7 +7,7 @@ import FoodEntryDialog from '@/components/FoodEntryDialog';
 import FoodDetailSheet from '@/components/FoodDetailSheet';
 import SettingsDialog from '@/components/SettingsDialog';
 import AdDialog from '@/components/AdDialog';
-import InfoBalloon from '@/components/InoBalloon';
+import InfoBalloon from '@/components/InfoBalloon';
 import { SteakIcon, OilDropIcon, SugarCubesIcon } from '@/components/MacroIcons';
 import { getProfile, getTodayTotals, getTodayEntries, deleteEntry } from '@/lib/storage';
 import { calculateDailyMacroGoals } from '@/lib/calories';
