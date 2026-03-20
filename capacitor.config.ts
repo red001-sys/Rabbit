@@ -1,9 +1,17 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+
+
+// capacitor.config.ts
+
+import { CapacitorConfig } from '@capacitor/ts-core';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.aa1646eb938b483d941bdc95db20b728',
-  appName: 'NutriBuddy',
+  appId: 'com.rabbit.buddy',
+  appName: 'Rabbit',
   webDir: 'dist',
+  bundledWebRuntime: false,
+  android: {
+    allowMixedContent: true
+  }
 };
 
 export default config;
