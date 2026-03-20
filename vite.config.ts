@@ -4,9 +4,10 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig({
-  base: "./",
+  base: "/", // ✅ IMPORTANTE para Capacitor
+
   server: {
-    host: "::",
+    host: true,
     port: 8080,
     hmr: {
       overlay: false,
@@ -21,8 +22,8 @@ export default defineConfig({
       includeAssets: ["favicon.ico"],
 
       manifest: {
-        name: "Nutri App",
-        short_name: "Nutri",
+        name: "Rabbit",
+        short_name: "Rabbit",
         start_url: "/",
         display: "standalone",
         background_color: "#ffffff",
