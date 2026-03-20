@@ -22,8 +22,7 @@ const Dashboard = () => {
   const profile = getProfile();
 
 if (!profile) {
-  navigate("/"); // ou onboarding
-  return null;
+  return <div style={{padding:20}}>Criando perfil...</div>;
 }
   const [, setRefresh] = useState(0);
   const refresh = useCallback(() => setRefresh(r => r + 1), []);
@@ -35,10 +34,12 @@ if (!profile) {
   const [balloon, setBalloon] = useState<string | null>(null);
   const [entryMode, setEntryMode] = useState<'text' | 'photo'>('text');
 
-  useEffect(() => { initAdMob(); }, []);
+  useEffect(() => {
+  // initAdMob();
+}, []);
 
   const handleShowAd = useCallback(async () => {
-    const shown = await showInterstitialAd();
+    //const shown = await showInterstitialAd();
     if (!shown) setShowAd(true);
   }, []);
 
