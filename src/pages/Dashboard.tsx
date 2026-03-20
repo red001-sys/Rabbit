@@ -7,7 +7,7 @@ import FoodEntryDialog from '@/components/FoodEntryDialog';
 import FoodDetailSheet from '@/components/FoodDetailSheet';
 import SettingsDialog from '@/components/SettingsDialog';
 import AdDialog from '@/components/AdDialog';
-import InfoBalloon from '@/components/InfoBalloon';
+import InfoBalloon from '@/components/InoBalloon';
 import { SteakIcon, OilDropIcon, SugarCubesIcon } from '@/components/MacroIcons';
 import { getProfile, getTodayTotals, getTodayEntries, deleteEntry } from '@/lib/storage';
 import { calculateDailyMacroGoals } from '@/lib/calories';
@@ -22,7 +22,8 @@ const Dashboard = () => {
   const profile = getProfile();
 
 if (!profile) {
-  return <div>Loading...</div>;
+  navigate("/"); // ou onboarding
+  return null;
 }
   const [, setRefresh] = useState(0);
   const refresh = useCallback(() => setRefresh(r => r + 1), []);
