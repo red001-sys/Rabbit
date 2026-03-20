@@ -1,0 +1,33 @@
+workflows:
+  android-build:
+    name: Build Android APK
+    max_build_duration: 60
+
+    environment:
+      node: 22
+      java: 17
+
+    scripts:
+      - name: Install dependencies
+        script: |
+          npm install
+
+      - name: Fix Vite (terser)
+        script: |
+          npm install terser --save-dev
+
+      - name: Build web app
+        script: |
+          npm run build
+
+      - name: Sync Capacitor
+        script: |
+          npx cap sync android
+
+      - name: Build APK
+        script: |
+          cd android
+          ./gradlew assembleDebug
+
+    artifacts:
+      - android/app/build/outputs/**/*.apk
