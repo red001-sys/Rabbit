@@ -5,4 +5,10 @@ import { applyTheme } from "./lib/theme";
 
 applyTheme();
 
-createRoot(document.getElementById("root")!).render(<App />);
+const rootElement = document.getElementById("root");
+
+if (!rootElement) {
+  throw new Error('Elemento "root" não encontrado.');
+}
+
+createRoot(rootElement).render(<App />);
