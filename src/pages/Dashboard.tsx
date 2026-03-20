@@ -19,7 +19,11 @@ import { useLanguage } from '@/contexts/LanguageContext';
 const Dashboard = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const profile = getProfile()!;
+  const profile = getProfile();
+
+if (!profile) {
+  return <div>Loading...</div>;
+}
   const [, setRefresh] = useState(0);
   const refresh = useCallback(() => setRefresh(r => r + 1), []);
 
